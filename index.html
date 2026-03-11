@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POLYMATHLAB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 80px 24px 24px;
+    }
+
+    .logo {
+      margin-bottom: 72px;
+    }
+
+    .logo img {
+      height: 120px;
+    }
+
+    .projects {
+      display: flex;
+      gap: 48px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .project-card {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      transition: transform 0.2s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .project-card:hover .thumbnail {
+      border-color: #00b8d4;
+      box-shadow: 0 8px 32px rgba(0, 184, 212, 0.15);
+    }
+
+    .thumbnail {
+      width: 240px;
+      height: 340px;
+      background: #f5f5f5;
+      border: 1px solid #333;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .thumbnail canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumbnail .placeholder {
+      color: #aaa;
+      font-size: 13px;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .project-label {
+      font-size: 15px;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      color: #aaa;
+    }
+
+    @media (max-width: 580px) {
+      body { padding: 48px 20px 40px; }
+      .logo img { height: 36px; }
+      .logo { margin-bottom: 48px; }
+      .projects { gap: 36px; }
+      .thumbnail { width: 200px; height: 283px; }
+    }
+
+    .contact {
+      margin-top: auto;
+      padding-top: 80px;
+      position: relative;
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .contact-label {
+      font-size: 15px;
+      font-weight: 400;
+      color: #fff;
+      cursor: default;
+      letter-spacing: 0.03em;
+    }
+
+    .email-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+    }
+
+    .contact:hover .email-row {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .email-text {
+      font-size: 14px;
+      color: #888;
+      letter-spacing: 0.01em;
+    }
+
+    .copy-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      transition: color 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      color: #fff;
+    }
+
+    .copy-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo">
+    <img src="logo.png" alt="POLYMATHLAB">
+  </div>
+
+  <div class="projects">
+
+    <a class="project-card" href="Projeto_No_1.pdf" target="_blank" rel="noopener">
+      <div class="thumbnail" id="thumb-1">
+        <div class="placeholder">Loading...</div>
+      </div>
+      <span class="project-label">Projeto No. 1</span>
+    </a>
+
+  </div>
+
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    function renderPdfThumbnail(pdfUrl, containerId) {
+      var container = document.getElementById(containerId);
+      pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
+        pdf.getPage(1).then(function(page) {
+          var thumbWidth = 240 * 2;
+          var viewport = page.getViewport({ scale: 1 });
+          var scale = thumbWidth / viewport.width;
+          var scaledViewport = page.getViewport({ scale: scale });
+
+          var canvas = document.createElement('canvas');
+          canvas.width = scaledViewport.width;
+          canvas.height = scaledViewport.height;
+
+          container.innerHTML = '';
+          container.appendChild(canvas);
+
+          page.render({
+            canvasContext: canvas.getContext('2d'),
+            viewport: scaledViewport
+          });
+        });
+      }).catch(function() {
+        container.innerHTML = '<div class="placeholder">PDF preview unavailable</div>';
+      });
+    }
+
+    renderPdfThumbnail('Projeto_No_1.pdf', 'thumb-1');
+  </script>
+
+  <div class="contact">
+    <span class="contact-label">Contact</span>
+    <div class="email-row">
+      <span class="email-text"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2b475e42514c5848434e5e4e596b4c464a424705484446">[email&#160;protected]</a></span>
+      <button class="copy-btn" onclick="copyEmail(this)" aria-label="Copy email">
+        <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    function copyEmail(btn) {
+      navigator.clipboard.writeText('luizgscheuer@gmail.com');
+      var copyIcon = btn.querySelector('.icon-copy');
+      var checkIcon = btn.querySelector('.icon-check');
+      copyIcon.style.display = 'none';
+      checkIcon.style.display = 'block
